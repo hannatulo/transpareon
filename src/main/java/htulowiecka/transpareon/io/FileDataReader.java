@@ -1,6 +1,6 @@
 package htulowiecka.transpareon.io;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,14 +13,12 @@ public class FileDataReader implements DataReader {
     private Iterator<String> fileLines;
 
     public FileDataReader(String filepath) throws IOException {
-        try (Stream<String> stream = Files.lines(Paths.get(
-                getClass().getClassLoader().getResource(filepath).toURI()
-        ))) {
-            fileLines = stream
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filepath);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))
+        ) {
+            fileLines = reader.lines()
                     .collect(Collectors.toList())
                     .iterator();
-        } catch (URISyntaxException e) {
-            throw new IOException(e);
         }
     }
 
